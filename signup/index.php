@@ -22,6 +22,9 @@ if ($status === 'error' && $error) {
         case 'short_password':
             $errorMessage = 'Password should be at least 6 characters.';
             break;
+        case 'invalid_password_chars':
+            $errorMessage = 'Password can contain only letters (no numbers or symbols).';
+            break;
         case 'terms_required':
             $errorMessage = 'You must agree to the Terms and Conditions.';
             break;
@@ -51,9 +54,8 @@ if ($status === 'error' && $error) {
     <div class="card">
       <!-- Logo area -->
       <div class="logo">
-        <div class="logo-circle">
-          <img src="../image/carlogo.png" alt="Vehicle Logo" class="logo-icon" />
-        </div>
+        <!-- Logo image (place your uploaded logo in /image/logo.png) -->
+        <img src="../image/logo.png" alt="Vehicle Logo" class="logo-image" />
       </div>
 
       <h1>Vehicle Job Card System</h1>
@@ -124,6 +126,8 @@ if ($status === 'error' && $error) {
               placeholder="Enter your password"
               required
               minlength="6"
+              pattern="[A-Za-z]+"
+              title="Password can contain only letters (no numbers or symbols)."
             />
             <span class="icon eye-icon" id="togglePassword">👁</span>
           </div>

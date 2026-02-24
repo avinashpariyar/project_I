@@ -56,7 +56,7 @@ if ($status === 'error' && $error) {
       </div>
 
       <h1>Vehicle Job Card System</h1>
-      <p class="subtitle"><b>Create your ID</b></p>
+      <p class="subtitle"><b>Create your ID<b></p>
 
       <?php if (!empty($errorMessage)): ?>
         <div class="error-message">

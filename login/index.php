@@ -53,7 +53,8 @@
       ?>
 
       <!-- Login form -->
-      <form action="login.php" method="POST" id="loginForm">
+      <!-- Disable browser validation pop-ups (we show errors via PHP) -->
+      <form action="login.php" method="POST" id="loginForm" novalidate>
         <!-- Email input field -->
         <label>Email</label>
         <div class="input-group">
@@ -90,8 +91,8 @@
     </div>
   </div>
 
-  <!-- Link to external JavaScript file -->
-  <script src="script.js"></script>
+  <!-- Link to external JavaScript file (cache-busted) -->
+  <script src="script.js?v=1"></script>
 </body>
 </html>
 

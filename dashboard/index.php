@@ -43,10 +43,17 @@ $bays = [
           <span class="nav-icon">🏠</span>
           <span class="nav-label">Dashboard</span>
         </a>
-        <a href="../jobcard/index.php" class="nav-item">
-          <span class="nav-icon">📄</span>
-          <span class="nav-label">Job cards</span>
-        </a>
+        <div class="nav-group" data-hover-menu>
+          <a href="../jobcard/index.php" class="nav-item">
+            <span class="nav-icon">📄</span>
+            <span class="nav-label">Job cards</span>
+            <span class="nav-caret">▾</span>
+          </a>
+          <div class="nav-submenu">
+            <a href="../jobcard/create.php" class="nav-subitem">Create New Job Card</a>
+            <a href="../jobcard/track.php" class="nav-subitem">Track Repair</a>
+          </div>
+        </div>
         <a href="../customers/index.php" class="nav-item">
           <span class="nav-icon">👥</span>
           <span class="nav-label">Customers</span>
@@ -94,16 +101,6 @@ $bays = [
         </div>
       </section>
 
-      <!-- Job cards quick actions -->
-      <section class="jobcards-toolbar">
-        <a href="../jobcard/create.php" class="jobcards-button jobcards-button-primary">
-          + Create Job Card
-        </a>
-        <a href="../jobcard/track.php" class="jobcards-button jobcards-button-outline">
-          Track Repair
-        </a>
-      </section>
-
       <!-- Bay overview -->
       <section class="bay-section">
         <div class="bay-header">
@@ -139,7 +136,7 @@ $bays = [
                 </span>
               </div>
               <p class="bay-subtitle">
-                <?php echo $bay['status'] === 'free' ? 'No active job' : 'Job active'; ?>
+                Free
               </p>
             </button>
           <?php endforeach; ?>

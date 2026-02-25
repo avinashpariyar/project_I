@@ -3,6 +3,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const bayButtons = document.querySelectorAll('.bay-card');
+  const hoverMenus = document.querySelectorAll('[data-hover-menu]');
   const STORAGE_KEY = 'selectedBayId';
 
   function clearSelection() {
@@ -38,5 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   restoreSelection();
+
+  hoverMenus.forEach(menu => {
+    menu.addEventListener('mouseenter', () => {
+      menu.classList.add('is-open');
+    });
+
+    menu.addEventListener('mouseleave', () => {
+      menu.classList.remove('is-open');
+    });
+  });
 });
 

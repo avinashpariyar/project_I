@@ -49,8 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 setcookie('remember_user', $user['id'], time() + (30 * 24 * 60 * 60), '/');
             }
             
-            // Redirect to dashboard or home page after successful login
-            header("Location: ../dashboard/index.php"); // Change to your dashboard path
+            // Redirect to home page after successful login
+            header("Location: ../index.php");
             exit();
             
         } else {

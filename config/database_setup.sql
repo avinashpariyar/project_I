@@ -28,3 +28,32 @@ CREATE TABLE IF NOT EXISTS users (
 -- INSERT INTO users (first_name, last_name, email, password)  
 -- VALUES ('Admin', 'User', 'admin@example.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
+-- Create job cards table for vehicle service entries
+CREATE TABLE IF NOT EXISTS job_cards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    job_card_no VARCHAR(50) NOT NULL UNIQUE,
+    vehicle_number VARCHAR(50) NOT NULL,
+    vehicle_model VARCHAR(100) NOT NULL,
+    service_date DATE NOT NULL,
+    customer_name VARCHAR(150) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    kms INT NOT NULL,
+    customer_address TEXT NOT NULL,
+    inventory_items JSON NULL,
+    fuel_level ENUM('Empty', '1/4', '1/2', '3/4', 'Full') NOT NULL,
+    demanded_jobs TEXT NOT NULL,
+    recommended_jobs TEXT NULL,
+    submitted_by VARCHAR(150) NOT NULL,
+    mechanic_name VARCHAR(150) NULL,
+    bay_code VARCHAR(20) NOT NULL,
+    job_status ENUM('pending', 'in-progress', 'completed') NOT NULL DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_vehicle_number (vehicle_number),
+    INDEX idx_customer_name (customer_name),
+    INDEX idx_mechanic_name (mechanic_name),
+    INDEX idx_service_date (service_date),
+    INDEX idx_bay_code (bay_code),
+    INDEX idx_job_status (job_status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

@@ -150,3 +150,67 @@ document.addEventListener('DOMContentLoaded', () => {
     serviceDateInput.valueAsDate = today;
   }
 });
+
+// Track repair date filtering
+document.addEventListener('DOMContentLoaded', () => {
+  const startDateInput = document.getElementById('startDate');
+  const endDateInput = document.getElementById('endDate');
+  const clearDateBtn = document.getElementById('clearDateFilter');
+  const exportBtn = document.getElementById('exportBtn');
+  const trackTable = document.querySelector('.track-table tbody');
+
+  if (!startDateInput || !endDateInput || !trackTable) {
+    return;
+  }
+
+  function filterByDate() {
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+    const rows = trackTable.querySelectorAll('tr');
+
+    rows.forEach(row => {
+      const dateCell = row.querySelector('td:nth-child(6) input[type="date"]');
+      if (!dateCell) return;
+
+      const rowDate = dateCell.value;
+
+      let show = true;
+      if (startDate && rowDate < startDate) {
+        show = false;
+      }
+      if (endDate && rowDate > endDate) {
+        show = false;
+      }
+
+      row.style.display = show ? '' : 'none';
+    });
+
+    // Update export link with date filters
+    if (exportBtn) {
+      let exportUrl = 'export_track.php';
+      const params = [];
+      if (startDate) params.push(`start_date=${encodeURIComponent(startDate)}`);
+      if (endDate) params.push(`end_date=${encodeURIComponent(endDate)}`);
+      if (params.length > 0) {
+        exportUrl += '?' + params.join('&');
+      }
+      exportBtn.href = exportUrl;
+    }
+  }
+
+  if (startDateInput) {
+    startDateInput.addEventListener('change', filterByDate);
+  }
+
+  if (endDateInput) {
+    endDateInput.addEventListener('change', filterByDate);
+  }
+
+  if (clearDateBtn) {
+    clearDateBtn.addEventListener('click', () => {
+      if (startDateInput) startDateInput.value = '';
+      if (endDateInput) endDateInput.value = '';
+      filterByDate();
+    });
+  }
+});

@@ -1,0 +1,53 @@
+[
+
+
+    {
+        "name": "Sita Devi",
+        "phone": "9842222222",
+        "vehicle_no": "BA-2-KHA-5678",
+        "model": "Honda City",
+        "address": "Lalitpur"
+    },
+    {
+        "name": "Hari Bahadur",
+        "phone": "9843333333",
+        "vehicle_no": "BA-3-GA-9012",
+        "model": "Hyundai i20",
+        "address": "Bhaktapur"
+    },
+    {
+        "name": "Gita Kumari",
+        "phone": "9844444444",
+        "vehicle_no": "BA-4-GHA-3456",
+        "model": "Maruti Swift",
+        "address": "Pokhara"
+    },
+    {
+        "name": "Krishna Thapa",
+        "phone": "9845555555",
+        "vehicle_no": "BA-5-NGA-7890",
+        "model": "Toyota Corolla",
+        "address": "Chitwan"
+    },
+    {
+        "name": "reuben thapaliya",
+        "vehicle_no": "BA-O1-PA-2023",
+        "model": "bolero",
+        "address": "kathmandu",
+        "phone": "9804114018"
+    },
+    {
+        "name": "asmiata",
+        "vehicle_no": "BA-O1-PA-2023",
+        "model": "scporiop",
+        "address": "kalandi",
+        "phone": "8888888888"
+    },
+    {
+        "name": "manoj shirimali",
+        "vehicle_no": "16589",
+        "model": "bolero",
+        "address": "sitapaila",
+        "phone": "6666666666"
+    }
+]

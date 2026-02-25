@@ -1,215 +1,138 @@
 document.addEventListener('DOMContentLoaded', () => {
   const hoverMenus = document.querySelectorAll('[data-hover-menu]');
-  const searchInput = document.getElementById('customer-search');
-  const showFilter = document.getElementById('show-filter');
-  const modelFilter = document.getElementById('model-filter');
-  const pageSizeSelect = document.getElementById('page-size');
-  const resultSummary = document.getElementById('result-summary');
-  const emptyState = document.getElementById('empty-state');
-  const pagination = document.getElementById('pagination');
-  const prevPageBtn = document.getElementById('prev-page');
-  const nextPageBtn = document.getElementById('next-page');
-  const filterToggleBtn = document.getElementById('toggle-filters');
-  const filtersPanel = document.getElementById('filters-panel');
-  const clearFiltersBtn = document.getElementById('clear-filters');
-  const importTrigger = document.getElementById('import-trigger');
-  const importFileInput = document.getElementById('import-file');
-  const importForm = importFileInput ? importFileInput.closest('form') : null;
-  const tableBody = document.getElementById('customer-table-body');
-  const rows = tableBody ? Array.from(tableBody.querySelectorAll('tr')) : [];
+  const searchInput = document.getElementById('customerSearch');
+  const addressFilter = document.getElementById('addressFilter');
+  const clearFiltersBtn = document.getElementById('clearFilters');
+  const tableBody = document.getElementById('customerTableBody');
+  const visibleCount = document.getElementById('visibleCount');
+  const totalCount = document.getElementById('totalCount');
+  const prevPageBtn = document.getElementById('prevPage');
+  const nextPageBtn = document.getElementById('nextPage');
+  const pageInfo = document.getElementById('pageInfo');
+
+  const ITEMS_PER_PAGE = 12;
   let currentPage = 1;
+  let filteredRows = [];
 
   hoverMenus.forEach(menu => {
-    menu.addEventListener('mouseenter', () => {
-      menu.classList.add('is-open');
-    });
-
-    menu.addEventListener('mouseleave', () => {
-      menu.classList.remove('is-open');
-    });
+    menu.addEventListener('mouseenter', () => menu.classList.add('is-open'));
+    menu.addEventListener('mouseleave', () => menu.classList.remove('is-open'));
   });
 
-  if (importTrigger && importFileInput) {
-    importTrigger.addEventListener('click', () => {
-      importFileInput.click();
-    });
+  function getFilteredRows() {
+    if (!tableBody) return [];
 
-    importFileInput.addEventListener('change', () => {
-      if (importFileInput.files && importFileInput.files.length > 0 && importForm) {
-        importForm.submit();
-      }
-    });
-  }
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const selectedAddress = addressFilter ? addressFilter.value.toLowerCase() : '';
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
 
-  if (filterToggleBtn && filtersPanel) {
-    filterToggleBtn.addEventListener('click', () => {
-      filtersPanel.hidden = !filtersPanel.hidden;
-    });
-  }
+    return allRows.filter(row => {
+      const name = row.getAttribute('data-name') || '';
+      const phone = row.getAttribute('data-phone') || '';
+      const vehicle = row.getAttribute('data-vehicle') || '';
+      const model = row.getAttribute('data-model') || '';
+      const address = row.getAttribute('data-address') || '';
 
-  if (clearFiltersBtn) {
-    clearFiltersBtn.addEventListener('click', () => {
-      if (modelFilter) {
-        modelFilter.value = '';
-      }
-      if (showFilter) {
-        showFilter.value = 'all';
-      }
-      if (searchInput) {
-        searchInput.value = '';
-      }
-      currentPage = 1;
+      const matchesSearch = !searchTerm || 
+        name.includes(searchTerm) || 
+        phone.includes(searchTerm) || 
+        vehicle.includes(searchTerm) || 
+        model.includes(searchTerm) ||
+        address.includes(searchTerm);
 
-      if (rows.length > 0 && searchInput && pageSizeSelect && resultSummary && pagination) {
-        applyFilters();
-      } else {
-        if (resultSummary) {
-          resultSummary.textContent = '0-0 of 0';
-        }
-        if (pagination) {
-          pagination.innerHTML = '';
-        }
-      }
+      const matchesAddress = !selectedAddress || address === selectedAddress;
+
+      return matchesSearch && matchesAddress;
     });
   }
 
-  if (!searchInput || rows.length === 0 || !pageSizeSelect || !resultSummary || !pagination) {
-    if (resultSummary) {
-      resultSummary.textContent = '0-0 of 0';
-    }
-    if (pagination) {
-      pagination.innerHTML = '';
-    }
-    if (prevPageBtn) {
-      prevPageBtn.disabled = true;
-    }
-    if (nextPageBtn) {
-      nextPageBtn.disabled = true;
-    }
-    return;
-  }
+  function updateTable() {
+    if (!tableBody) return;
 
-  function filterRows() {
-    const keyword = searchInput.value.trim().toLowerCase();
-    const showValue = showFilter ? showFilter.value : 'all';
-    const modelValue = modelFilter ? modelFilter.value.trim().toLowerCase() : '';
-
-    return rows.filter(row => {
-      const rowName = row.dataset.name || '';
-      const rowPhone = row.dataset.phone || '';
-      const rowAddress = row.dataset.address || '';
-      const rowVehicleNo = row.dataset.vehicleNo || '';
-      const rowModel = row.dataset.model || '';
-
-      const searchable = [rowName, rowPhone, rowAddress, rowVehicleNo, rowModel].join(' ');
-      const matchesKeyword = keyword === '' || searchable.includes(keyword);
-
-      let matchesShow = true;
-      if (showValue === 'with-vehicle') {
-        matchesShow = rowVehicleNo !== '';
-      }
-      if (showValue === 'without-vehicle') {
-        matchesShow = rowVehicleNo === '';
-      }
-
-      const matchesModel = modelValue === '' || rowModel === modelValue;
-      return matchesKeyword && matchesShow && matchesModel;
-    });
-  }
-
-  function renderPagination(totalPages) {
-    pagination.innerHTML = '';
-
-    for (let page = 1; page <= totalPages; page++) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = `page-btn${page === currentPage ? ' active' : ''}`;
-      button.textContent = String(page);
-      button.addEventListener('click', () => {
-        currentPage = page;
-        applyFilters();
-      });
-      pagination.appendChild(button);
-    }
-  }
-
-  function applyFilters() {
-    const filteredRows = filterRows();
-    const pageSize = Math.max(parseInt(pageSizeSelect.value, 10) || 10, 1);
-    const totalRecords = filteredRows.length;
-    const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
-
-    if (currentPage > totalPages) {
+    filteredRows = getFilteredRows();
+    const totalPages = Math.ceil(filteredRows.length / ITEMS_PER_PAGE);
+    
+    // Reset to page 1 if current page exceeds total pages
+    if (currentPage > totalPages && totalPages > 0) {
       currentPage = totalPages;
     }
-
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const visibleRows = filteredRows.slice(startIndex, endIndex);
-
-    rows.forEach(row => {
-      row.style.display = visibleRows.includes(row) ? '' : 'none';
-    });
-
-    resultSummary.textContent = `${totalRecords === 0 ? 0 : startIndex + 1}-${Math.min(endIndex, totalRecords)} of ${totalRecords}`;
-    if (emptyState) {
-      emptyState.hidden = totalRecords !== 0;
+    if (currentPage < 1) {
+      currentPage = 1;
     }
 
-    renderPagination(totalPages);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
 
+    // Hide all rows first
+    const allRows = tableBody.querySelectorAll('tr');
+    allRows.forEach(row => row.style.display = 'none');
+
+    // Show only current page rows
+    filteredRows.slice(startIndex, endIndex).forEach(row => {
+      row.style.display = '';
+    });
+
+    // Update counts
+    if (visibleCount) {
+      const showing = Math.min(filteredRows.length, endIndex) - startIndex;
+      visibleCount.textContent = showing;
+    }
+    if (totalCount) {
+      totalCount.textContent = filteredRows.length;
+    }
+
+    // Update pagination controls
+    if (pageInfo) {
+      pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+    }
     if (prevPageBtn) {
       prevPageBtn.disabled = currentPage <= 1;
     }
     if (nextPageBtn) {
-      nextPageBtn.disabled = currentPage >= totalPages;
+      nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
     }
   }
 
-  searchInput.addEventListener('input', () => {
-    currentPage = 1;
-    applyFilters();
-  });
-
-  if (showFilter) {
-    showFilter.addEventListener('change', () => {
-      currentPage = 1;
-      applyFilters();
-    });
+  function filterTable() {
+    currentPage = 1; // Reset to first page when filtering
+    updateTable();
   }
 
-  if (modelFilter) {
-    modelFilter.addEventListener('change', () => {
-      currentPage = 1;
-      applyFilters();
-    });
+  if (searchInput) {
+    searchInput.addEventListener('input', filterTable);
   }
 
-  pageSizeSelect.addEventListener('change', () => {
-    currentPage = 1;
-    applyFilters();
-  });
+  if (addressFilter) {
+    addressFilter.addEventListener('change', filterTable);
+  }
+
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      if (addressFilter) addressFilter.value = '';
+      filterTable();
+    });
+  }
 
   if (prevPageBtn) {
     prevPageBtn.addEventListener('click', () => {
       if (currentPage > 1) {
-        currentPage -= 1;
-        applyFilters();
+        currentPage--;
+        updateTable();
       }
     });
   }
 
   if (nextPageBtn) {
     nextPageBtn.addEventListener('click', () => {
-      const filteredRows = filterRows();
-      const pageSize = Math.max(parseInt(pageSizeSelect.value, 10) || 10, 1);
-      const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+      const totalPages = Math.ceil(filteredRows.length / ITEMS_PER_PAGE);
       if (currentPage < totalPages) {
-        currentPage += 1;
-        applyFilters();
+        currentPage++;
+        updateTable();
       }
     });
   }
 
-  applyFilters();
+  // Initial load
+  updateTable();
 });

@@ -439,17 +439,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['import_file'])) {
   exit();
 }
 
-if (empty($flashMessage) && file_exists($jsonFile)) {
+if (file_exists($jsonFile)) {
   $stored = json_decode((string)file_get_contents($jsonFile), true);
   if (is_array($stored) && !empty($stored)) {
     $customers = $stored;
   }
 }
 
-$jobCardCreated = hasCreatedJobCards(__DIR__);
-if (!$jobCardCreated) {
-  $customers = [];
-  $emptyStateMessage = 'Data will appear here after at least one job card is created.';
+if (empty($customers)) {
+  $emptyStateMessage = 'Data will appear here after completing jobs in Track Repair (click OK button).';
 }
 
 if (isset($_GET['action']) && $_GET['action'] === 'export') {
@@ -582,7 +580,86 @@ sort($models);
         </div>
       <?php endif; ?>
 
-      <section class="toolbar-row">
+      <section class="form-card">
+        <div class="card-head">
+          <h2>Customers</h2>
+          <p>Completed jobs from Track Repair. Total: <strong><?php echo count($customers); ?></strong> customers</p>
+        </div>
+
+        <div class="search-filter-bar">
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="customerSearch" placeholder="Search by name, phone, vehicle..." />
+          </div>
+          <div class="filter-group">
+            <select id="addressFilter" class="filter-select">
+              <option value="">All Addresses</option>
+              <?php
+              $addresses = array_unique(array_filter(array_map(function($c) {
+                return trim((string)($c['address'] ?? ''));
+              }, $customers)));
+              sort($addresses);
+              foreach ($addresses as $address): ?>
+                <option value="<?php echo htmlspecialchars($address); ?>"><?php echo htmlspecialchars($address); ?></option>
+              <?php endforeach; ?>
+            </select>
+            <button type="button" id="clearFilters" class="clear-btn">Clear</button>
+            <a href="export.php" class="export-btn" title="Export to Excel">📊 Export</a>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="track-table">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Phone Number</th>
+                <th>Vehicle Number</th>
+                <th>Vehicle Model</th>
+                <th>Address</th>
+              </tr>
+            </thead>
+            <tbody id="customerTableBody">
+              <?php if (empty($customers)): ?>
+                <tr>
+                  <td colspan="5" class="empty-cell"><?php echo htmlspecialchars($emptyStateMessage); ?></td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($customers as $customer): ?>
+                  <tr data-name="<?php echo htmlspecialchars(strtolower($customer['name'] ?? '')); ?>"
+                      data-phone="<?php echo htmlspecialchars(strtolower($customer['phone'] ?? '')); ?>"
+                      data-vehicle="<?php echo htmlspecialchars(strtolower($customer['vehicle_no'] ?? '')); ?>"
+                      data-model="<?php echo htmlspecialchars(strtolower($customer['model'] ?? '')); ?>"
+                      data-address="<?php echo htmlspecialchars(strtolower($customer['address'] ?? '')); ?>">
+                    <td><?php echo htmlspecialchars($customer['name'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($customer['phone'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($customer['vehicle_no'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($customer['model'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($customer['address'] ?? ''); ?></td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <div class="result-info">
+            Showing <strong id="visibleCount"><?php echo count($customers); ?></strong> of <strong id="totalCount"><?php echo count($customers); ?></strong> customers
+          </div>
+          <div class="pagination-controls">
+            <button type="button" id="prevPage" class="pagination-btn">&laquo; Previous</button>
+            <span id="pageInfo" class="page-info">Page 1</span>
+            <button type="button" id="nextPage" class="pagination-btn">Next &raquo;</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
         <div class="control-btn control-left">
           <span class="control-label">Show:</span>
           <select id="show-filter" class="control-select" aria-label="Show filter">

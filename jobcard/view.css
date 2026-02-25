@@ -65,6 +65,30 @@ body {
   border: 1px solid #ffd5d5;
 }
 
+.success-notice {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 2px solid #66bb6a;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #2e7d32;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+}
+
+.success-notice a {
+  color: #1b5e20;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.success-notice a:hover {
+  color: #0d3d0f;
+}
+
 .jobcard-sheet {
   background: #ffffff;
   border: 1px solid #dfe6f2;

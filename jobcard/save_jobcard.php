@@ -216,10 +216,10 @@ try {
     $existingPhone = trim((string)($row['phone'] ?? ''));
     if ($existingPhone !== '' && $existingPhone === $phoneNumber) {
       $row['name'] = $customerName;
-      $row['phone'] = $phoneNumber;
-      $row['address'] = $customerAddress;
       $row['vehicle_no'] = $vehicleNumber;
       $row['model'] = $vehicleModel;
+      $row['address'] = $customerAddress;
+      $row['phone'] = $phoneNumber;
       $matched = true;
       break;
     }
@@ -229,10 +229,10 @@ try {
   if (!$matched) {
     $customerRows[] = [
       'name' => $customerName,
-      'phone' => $phoneNumber,
-      'address' => $customerAddress,
       'vehicle_no' => $vehicleNumber,
       'model' => $vehicleModel,
+      'address' => $customerAddress,
+      'phone' => $phoneNumber,
     ];
   }
 
@@ -240,7 +240,7 @@ try {
 
   echo json_encode([
     'success' => true,
-    'message' => 'Job card created successfully. Job Card No: ' . $jobCardNo . ' • ' . $bayMap[$bayCode],
+    'message' => 'Job card created successfully. Job Card No: ' . $jobCardNo . ' • ' . $bayMap[$bayCode] . ' | Customer data saved.',
     'jobCardNo' => $jobCardNo,
     'viewUrl' => 'view.php?job_card_no=' . urlencode($jobCardNo),
     'submittedBy' => ($_SESSION['user_name'] ?? $_SESSION['user_email'] ?? ''),

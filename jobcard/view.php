@@ -70,6 +70,10 @@ if ($jobCard && !empty($jobCard['inventory_items'])) {
       <div class="alert error"><?php echo htmlspecialchars($error); ?></div>
     <?php elseif ($jobCard): ?>
       <main class="jobcard-sheet">
+        <div class="success-notice no-print">
+          ✅ <strong>Customer data automatically saved!</strong> All customer information is now available in the <a href="../customer/index.php">Customers section</a>.
+        </div>
+
         <section class="sheet-head">
           <div>
             <h2>Vehicle Job Card System</h2>
